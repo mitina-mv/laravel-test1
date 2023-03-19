@@ -27,7 +27,13 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/p', 'TestController@index');
-Route::get('/p/create', 'TestController@firstOrCreate');
-Route::get('/p/update', 'TestController@updateOrCreate');
-Route::get('/p/delete', 'TestController@delete');
+Route::get('/form', 'TestController@index')->name('form.index');
+Route::get('/form/create', 'TestController@create')->name('form.create');
+Route::get('/form/{test}', 'TestController@show')->name('form.show');
+Route::get('/form/{test}/edit', 'TestController@edit')->name('form.edit');
+
+Route::post('/form', 'TestController@store')->name('form.store');
+
+Route::patch('/form/{test}', 'TestController@update')->name('form.update');
+
+Route::delete('/form/{test}', 'TestController@destroy')->name('form.delete');

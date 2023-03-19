@@ -9,108 +9,69 @@ class TestController extends Controller
 {
     public function index()
     {
-        // $test1 = Test1::find(2); // получаем запись с id = 2
-        // $test1s = Test1::all(); // коллекция из всех записей в таблице
-        $test1s = Test1::where('isActive', 1)->get(); //  коллекция по запросу select * from table where isActive = 1
-        $test1 = Test1::where('isActive', 1)->first(); // первый элемент по запросу аналог. предыд.
-        foreach($test1s as $test)
-        {
-            dump($test->title);
-        }
-        dd($test1->title);
+        $tests = Test1::all();
+
+        return view('form.index', compact('tests'));
     }
 
     public function create()
     {
-        $arr = [
-            [
-                'title' => 'title new',
-                'name' => 'name' . uniqid(),
-                'email' => uniqid(),
-                'isActive' => 1
-            ],
-            [
-                'title' => 'title 2',
-                'name' => 'name' . uniqid(),
-                'email' => uniqid(),
-                'isActive' => 1
-            ],
-            [
-                'title' => 'title 3',
-                'name' => 'name' . uniqid(),
-                'email' => uniqid(),
-                'isActive' => 1
-            ]
-        ];
+        return view('form.create');
+    }
 
-        foreach($arr as $t)
-        {
-            Test1::create($t);
+    public function store()
+    {
+        $data = request()->validate([
+            'title' => 'string',
+            'name' => 'string',
+            'email' => 'string',
+            'isActive' => 'string',
+        ]);
+
+        if(array_key_exists('isActive', $data)) {
+            $data['isActive'] = true;
+        } else {
+            $data['isActive'] = false;
         }
 
-        dd('created');
+        Test1::create($data);
+
+        return redirect()->route('form.index');
     }
 
-    public function update()
+    public function show(Test1 $test)
     {
-        $test = Test1::find(1);
+        return view('form.show', compact('test'));
+    }
 
-        $test->update([
-            'name' => $test->name . " (update)"
+    public function edit(Test1 $test)
+    {
+        return view('form.edit', compact('test'));
+    }
+
+    public function update(Test1 $test)
+    {
+        $data = request()->validate([
+            'title' => 'string',
+            'name' => 'string',
+            'email' => 'string',
+            'isActive' => '',
         ]);
+
+        if(array_key_exists('isActive', $data)) {
+            $data['isActive'] = true;
+        } else {
+            $data['isActive'] = false;
+        }
+
+
+        $test->update($data);
+        return redirect()->route('form.show', $test->id);
     }
 
-    public function delete()
+    public function destroy(Test1 $test)
     {
-        $test = Test1::find(2);
-        // $test = Test1::withTrashed()->find(2); // ищет даже среди мягко удаленых
-        // мягкое удаление, т.к. создан атрибут удаления
         $test->delete();
-        // проставляется атрибут delete_at, который обозначает, что запись удалена
-        // однако она остается в таблице и ее можно установить
-        // но laravel будет считать, что ее нет.
-        // чтобы найти ее, нужно у модели вызвать стат. метод withTrashed() 
-
-        // когда запись из "мусорки" будет найдена, можно вызвать restore() и восстановить запись
-        // будет удалено значение из атрибута delete_at
-    }
-
-    // комбинированные методы - когда нужно создать если нет и что-то сделать если запись есть
-    // firstOrCreate
-
-    public function firstOrCreate()
-    {
-        $arr = [
-            'title' => 'title new 11',
-            'name' => 'name' . uniqid(),
-            'email' => uniqid(),
-            'isActive' => 1
-        ];
-
-        $test = Test1::firstOrCreate(
-            [
-                'email' => '6416c81a6b071' // а эта запись была удалена в delete :)
-            ],
-            $arr
-        );
-
-        dump($test);
-    }
-
-    // updateOrCreate
-    public function updateOrCreate()
-    {
-        $arr = [
-            'title' => 'title update from record id 1'
-        ];
-
-        $test = Test1::updateOrCreate(
-            [
-                'email' => '6416c81a6b06f'
-            ],
-            $arr
-        );
-
-        dump($test->title);
+        return redirect()->route('form.index');
     }
 }
