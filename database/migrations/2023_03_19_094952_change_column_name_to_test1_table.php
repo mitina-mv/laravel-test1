@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class User extends Migration
+class ChangeColumnNameToTest1Table extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,9 @@ class User extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('test1s', function (Blueprint $table) {
+            $table->text('name')->change();
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class User extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('test1s', function (Blueprint $table) {
+            $table->string('name', 50)->change();
+        });
     }
 }

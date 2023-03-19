@@ -28,3 +28,6 @@ Route::middleware([
 });
 
 Route::get('/p', 'TestController@index');
+Route::get('/p/create', 'TestController@firstOrCreate');
+Route::get('/p/update', 'TestController@updateOrCreate');
+Route::get('/p/delete', 'TestController@delete');
