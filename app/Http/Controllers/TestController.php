@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Test1;
+use App\Services\Test1Service;
 
 class TestController extends Controller
 {
+    private $testService;
+
+    public function __construct(Test1Service $testService)
+    {
+        $this->testService = $testService;
+    }
+    
     public function index()
     {
-        $tests = Test1::all();
-
-        return view('form.index', compact('tests'));
+        dd($this->testService->getAllJSON());
     }
 
     public function create()
